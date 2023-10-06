@@ -1,0 +1,26 @@
+{
+    "name": "exan/bread",
+    "description": "Bread bot for Discord",
+    "type": "project",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Exan\\Bread\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Exanlv",
+            "email": "exan@landviz.nl"
+        }
+    ],
+    "require": {
+        "exan/fenrir": "0.9.4",
+        "exan/eventer": "*",
+        "monolog/monolog": "^3.0",
+        "psr/simple-cache": "^1.0",
+        "cache/array-adapter": "^1.2",
+        "vlucas/phpdotenv": "^5.5"
+    }
+}
