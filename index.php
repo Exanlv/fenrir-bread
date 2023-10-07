@@ -1,6 +1,7 @@
 <?php
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
+use Dotenv\Dotenv;
 use Exan\Bread\Breadbot;
 use Ragnarok\Fenrir\Discord;
 use Monolog\Level;
@@ -16,6 +17,11 @@ function env(string $key, mixed $default = null) {
 
     return $var === false ? $default : $var;
 }
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
+$dotenv->required('TOKEN');
 
 $cache = new ArrayCachePool();
 

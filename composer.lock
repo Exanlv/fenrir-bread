@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "453ddca48c70e298c68f687de394f04c",
+    "content-hash": "5a610da30127feec9366051383485fe4",
     "packages": [
         {
             "name": "brick/math",
@@ -468,16 +468,16 @@
         },
         {
             "name": "exan/fenrir",
-            "version": "0.9.4",
+            "version": "0.9.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dc-Ragnarok/Fenrir.git",
-                "reference": "80584c981d32b162fd4f7871b0500982e8355620"
+                "reference": "db4f11472f0dc43325e32176209948770ee7dc3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dc-Ragnarok/Fenrir/zipball/80584c981d32b162fd4f7871b0500982e8355620",
-                "reference": "80584c981d32b162fd4f7871b0500982e8355620",
+                "url": "https://api.github.com/repos/dc-Ragnarok/Fenrir/zipball/db4f11472f0dc43325e32176209948770ee7dc3d",
+                "reference": "db4f11472f0dc43325e32176209948770ee7dc3d",
                 "shasum": ""
             },
             "require": {
@@ -517,9 +517,9 @@
             "description": "Discord API & WS wrapper",
             "support": {
                 "issues": "https://github.com/dc-Ragnarok/Fenrir/issues",
-                "source": "https://github.com/dc-Ragnarok/Fenrir/tree/0.9.4"
+                "source": "https://github.com/dc-Ragnarok/Fenrir/tree/0.9.5"
             },
-            "time": "2023-10-06T22:23:51+00:00"
+            "time": "2023-10-06T23:47:31+00:00"
         },
         {
             "name": "exan/reactphp-retrier",

@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "exan/fenrir": "0.9.4",
+        "exan/fenrir": "0.9.5",
         "exan/eventer": "*",
         "monolog/monolog": "^3.0",
         "psr/simple-cache": "^1.0",
