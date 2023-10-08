@@ -38,6 +38,7 @@ $discord = new Discord(env('TOKEN'), $log);
 
 $discord->withGateway(Bitwise::from(
     Intent::GUILD_MESSAGES,
+    Intent::GUILD_MEMBERS,
 ))->withRest();
 
 $breadbot = new Breadbot(

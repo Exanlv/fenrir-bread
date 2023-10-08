@@ -2,6 +2,7 @@
 
 namespace Exan\Bread\Events;
 
+use Exan\Bread\EventListenerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Ragnarok\Fenrir\Discord;
@@ -14,7 +15,7 @@ use React\Promise\Promise;
 use function React\Async\async;
 use function React\Async\await;
 
-class BreadMessage
+class BreadMessage implements EventListenerInterface
 {
     private const BREAD_MARKERS = ['bread', '🍞'];
 
@@ -65,16 +66,17 @@ class BreadMessage
         });
     }
 
-    private function isFrench()
+    private function isFrench(): ExtendedPromiseInterface
     {
         return new Promise(function ($resolve, $reject) {
-            $frenchCacheKey = 'member_french.' . $this->messageCreate->guild_id . '.' . $this->messageCreate->author->id;
+            $frenchCacheKey = MemberUpdate::getFrenchCacheKey($this->messageCreate->guild_id, $this->messageCreate->author->id);
+
             if (!$this->cache->has($frenchCacheKey)) {
-                $username = $this->messageCreate->member->nick ?? $this->messageCreate->author->global_name ?? '';
+                $username = $this->messageCreate->member->nick ?? $this->messageCreate->author->username ?? '';
 
                 $this->cache->set(
                     $frenchCacheKey,
-                    str_contains($username, '🇫🇷'),
+                    MemberUpdate::isFrench($username),
                 );
             }
 
@@ -82,7 +84,7 @@ class BreadMessage
         });
     }
 
-    public function execute()
+    public function execute(): void
     {
         (async(function () {
             $isFrench = await($this->isFrench());
