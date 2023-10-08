@@ -1,6 +1,6 @@
 <?php
 
-namespace Exan\Bread;
+namespace Exan\Bread\Contracts;
 
 use React\Promise\ExtendedPromiseInterface;
 

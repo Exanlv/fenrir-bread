@@ -2,7 +2,7 @@
 
 namespace Exan\Bread\Events;
 
-use Exan\Bread\EventListenerInterface;
+use Exan\Bread\Contracts\EventListenerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Ragnarok\Fenrir\Discord;
@@ -90,6 +90,15 @@ class BreadMessage implements EventListenerInterface
             $isFrench = await($this->isFrench());
 
             $emote = $isFrench ? '🥖' : '🍞';
+
+            $this->log->debug('Adding react to message', [
+                'reaction' => $emote,
+                'message' => [
+                    'guild' => $this->messageCreate->guild_id,
+                    'channel' => $this->messageCreate->channel_id,
+                    'message' => $this->messageCreate->id,
+                ],
+            ]);
 
             $this->discord->rest->channel->createReaction(
                 $this->messageCreate->channel_id,

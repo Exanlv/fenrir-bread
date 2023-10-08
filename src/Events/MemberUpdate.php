@@ -2,7 +2,7 @@
 
 namespace Exan\Bread\Events;
 
-use Exan\Bread\EventListenerInterface;
+use Exan\Bread\Contracts\EventListenerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Ragnarok\Fenrir\Discord;
@@ -41,9 +41,16 @@ class MemberUpdate implements EventListenerInterface
     {
         $username = $this->guildMemberUpdate->nick ?? $this->guildMemberUpdate->user->username ?? '';
 
+        $isFrench = $this->isFrench($username);
+
+        $this->log->debug('Setting frenchness of user', [
+            'user' => $this->guildMemberUpdate->user->id,
+            'state' => $isFrench,
+        ]);
+
         $this->cache->set(
             $this->getFrenchCacheKey($this->guildMemberUpdate->guild_id, $this->guildMemberUpdate->user->id),
-            $this->isFrench($username),
+            $isFrench,
         );
     }
 }

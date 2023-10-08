@@ -8,8 +8,6 @@ use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Ragnarok\Fenrir\Constants\Events;
 use Ragnarok\Fenrir\Discord;
-use Ragnarok\Fenrir\Gateway\Events\GuildMemberUpdate;
-use Ragnarok\Fenrir\Gateway\Events\MessageCreate;
 
 class Breadbot
 {
