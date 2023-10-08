@@ -68,7 +68,17 @@ class BreadMessage
     private function isFrench()
     {
         return new Promise(function ($resolve, $reject) {
-            $resolve(false);
+            $frenchCacheKey = 'member_french.' . $this->messageCreate->guild_id . '.' . $this->messageCreate->author->id;
+            if (!$this->cache->has($frenchCacheKey)) {
+                $username = $this->messageCreate->member->nick ?? $this->messageCreate->author->global_name ?? '';
+
+                $this->cache->set(
+                    $frenchCacheKey,
+                    str_contains($username, '🇫🇷'),
+                );
+            }
+
+            $resolve($this->cache->get($frenchCacheKey));
         });
     }
 
