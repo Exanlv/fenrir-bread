@@ -2,15 +2,15 @@
 
 namespace Exan\Bread\Events;
 
+use Exan\Bread\CachyMcCacheFace;
 use Exan\Bread\Contracts\EventListenerInterface;
+use Exan\Bread\Contracts\ServerConfigRepositoryInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
-use Psr\SimpleCache\CacheInterface;
 use Ragnarok\Fenrir\Discord;
 use Ragnarok\Fenrir\Gateway\Events\MessageCreate;
-use Ragnarok\Fenrir\Parts\Channel;
 use Ragnarok\Fenrir\Rest\Helpers\Emoji\EmojiBuilder;
 use React\Promise\ExtendedPromiseInterface;
-use React\Promise\Promise;
 
 use function React\Async\async;
 use function React\Async\await;
@@ -22,71 +22,41 @@ class BreadMessage implements EventListenerInterface
     public function __construct(
         private readonly Discord $discord,
         private readonly MessageCreate $messageCreate,
-        private readonly CacheInterface $cache,
+        private readonly CachyMcCacheFace $cache,
         private readonly LoggerInterface $log,
+        private readonly ServerConfigRepositoryInterface $configs,
     ) {
     }
 
     public function filter(): ExtendedPromiseInterface
     {
-        return new Promise(function ($resolve, $reject) {
-            $channelId = $this->messageCreate->channel_id;
-            $channelCacheKey = 'channel_names.' . $channelId;
-
-            if (!$this->cache->has($channelCacheKey)) {
-
-                try {
-                    /** @var Channel */
-                    $channel = await($this->discord->rest->channel->get($channelId));
-                } catch (\Exception $e) {
-                    $this->log->info(sprintf('Unable to retrieve channel details of %s due to "%s"', $channelId, $e->getMessage()));
-
-                    $reject();
-
-                    return;
-                }
-
-                $this->cache->set(
-                    $channelCacheKey,
-                    strtolower($channel->name)
-                );
-            }
-
-            $channelName = $this->cache->get($channelCacheKey);
-
+        return $this->cache->getChannelName($this->messageCreate->channel_id)->then(function (string $channelName) {
             foreach (self::BREAD_MARKERS as $breadMarker) {
                 if (str_contains($channelName, $breadMarker)) {
-                    $resolve();
-
                     return;
                 }
             }
 
-            $reject();
+            var_dump($channelName);
+
+            throw new Exception('Channel is not a bread-channel');
         });
     }
 
     private function isFrench(): ExtendedPromiseInterface
     {
-        return new Promise(function ($resolve, $reject) {
-            $frenchCacheKey = MemberUpdate::getFrenchCacheKey($this->messageCreate->guild_id, $this->messageCreate->author->id);
-
-            if (!$this->cache->has($frenchCacheKey)) {
-                $username = $this->messageCreate->member->nick ?? $this->messageCreate->author->username ?? '';
-
-                $this->cache->set(
-                    $frenchCacheKey,
-                    MemberUpdate::isFrench($username),
-                );
+        return $this->cache->isUserFrench(
+            $this->messageCreate->guild_id,
+            $this->messageCreate->author->id,
+            function (): string {
+                return $this->messageCreate->member->nick ?? $this->messageCreate->author->username ?? '';
             }
-
-            $resolve($this->cache->get($frenchCacheKey));
-        });
+        );
     }
 
     public function execute(): void
     {
-        (async(function () {
+        async(function () {
             $isFrench = await($this->isFrench());
 
             $emote = $isFrench ? '🥖' : '🍞';
@@ -105,6 +75,6 @@ class BreadMessage implements EventListenerInterface
                 $this->messageCreate->id,
                 EmojiBuilder::new()->setId($emote)
             );
-        }))();
+        })();
     }
 }

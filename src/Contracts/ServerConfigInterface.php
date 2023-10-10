@@ -8,8 +8,7 @@ interface ServerConfigInterface
 
     public function storeBreadScore(string $userId, int $bread);
 
-    /**
-     * @return BreadScoreInterface[]
-     */
+    public function removeBreadScore(string $userId);
+
     public function getTop(int $places = 5): array;
 }

@@ -2,6 +2,7 @@
 
 namespace Exan\Bread;
 
+use Exan\Bread\Contracts\ServerConfigRepositoryInterface;
 use Exan\Bread\Events\BreadMessage;
 use Exan\Bread\Events\MemberUpdate;
 use Psr\Log\LoggerInterface;
@@ -23,8 +24,9 @@ class Breadbot
 
     public function __construct(
         private readonly Discord $discord,
-        private readonly CacheInterface $cache,
+        private readonly CachyMcCacheFace $cache,
         private readonly LoggerInterface $logger,
+        private readonly ServerConfigRepositoryInterface $configs,
     ) {
         foreach (self::LISTENERS as $eventName => $listeners) {
             /** @var class-string $listener */
@@ -34,7 +36,8 @@ class Breadbot
                         $this->discord,
                         $event,
                         $this->cache,
-                        $this->logger
+                        $this->logger,
+                        $this->configs,
                     );
 
                     $eventHandler->filter()->then(static function () use ($eventHandler) {

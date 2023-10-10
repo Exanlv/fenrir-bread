@@ -2,9 +2,10 @@
 
 namespace Exan\Bread\Events;
 
+use Exan\Bread\CachyMcCacheFace;
 use Exan\Bread\Contracts\EventListenerInterface;
+use Exan\Bread\Contracts\ServerConfigRepositoryInterface;
 use Psr\Log\LoggerInterface;
-use Psr\SimpleCache\CacheInterface;
 use Ragnarok\Fenrir\Discord;
 use Ragnarok\Fenrir\Gateway\Events\GuildMemberUpdate;
 use React\Promise\ExtendedPromiseInterface;
@@ -12,11 +13,6 @@ use React\Promise\Promise;
 
 class MemberUpdate implements EventListenerInterface
 {
-    public static function getFrenchCacheKey(string $guildId, string $userId): string
-    {
-        return 'member_french.' . $guildId . '.' . $userId;
-    }
-
     public static function isFrench($username): bool
     {
         return str_contains($username, '🇫🇷');
@@ -25,8 +21,9 @@ class MemberUpdate implements EventListenerInterface
     public function __construct(
         private readonly Discord $discord,
         private readonly GuildMemberUpdate $guildMemberUpdate,
-        private readonly CacheInterface $cache,
+        private readonly CachyMcCacheFace $cache,
         private readonly LoggerInterface $log,
+        private readonly ServerConfigRepositoryInterface $configs,
     ) {
     }
 
@@ -48,8 +45,9 @@ class MemberUpdate implements EventListenerInterface
             'state' => $isFrench,
         ]);
 
-        $this->cache->set(
-            $this->getFrenchCacheKey($this->guildMemberUpdate->guild_id, $this->guildMemberUpdate->user->id),
+        $this->cache->updateUserFrench(
+            $this->guildMemberUpdate->guild_id,
+            $this->guildMemberUpdate->user->id,
             $isFrench,
         );
     }
